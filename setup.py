@@ -16,6 +16,7 @@ setup(
             "PID = PolarionIds:PolarionIds",
             "UFN = UniqueFixturesNames:UniqueFixturesNames",
             "NIFC = NoImportFromConftest:NoImportFromConftest",
+            "NIFT = NoImportFromTests:NoImportFromTests",
         ],
     },
 )

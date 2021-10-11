@@ -6,7 +6,7 @@ flake8 extension to check import from conftest.py..
 
 import ast
 
-NIFC001 = "NIFC: Import from conftest.py is not allowed."
+NIFC001 = "NIFT: Import from conftest.py is not allowed."
 
 
 class NoImportFromConftest(object):
@@ -26,14 +26,27 @@ class NoImportFromConftest(object):
         """
         Check if file import from conftest.py
         """
-        for elm in self.tree.body:
-            if isinstance(elm, ast.Import) or isinstance(elm, ast.ImportFrom):
-                line_number = elm.lineno
-                line = self.lines[line_number]
-                if "conftest import" in line or "import conftest" in line:
-                    yield (
-                        line_number,
-                        elm.col_offset,
-                        NIFC001,
-                        self.name,
-                    )
+        imports = [
+            line
+            for line in self.lines
+            if "conftest" in line and (line.startswith("import") or line.startswith("from"))
+        ]
+
+        for _import in imports:
+            yield (
+                self.lines.index(_import) + 1,
+                1,
+                NIFC001,
+                self.name,
+            )
+        # for elm in self.tree.body:
+        #     if isinstance(elm, ast.Import) or isinstance(elm, ast.ImportFrom):
+        #         line_number = elm.lineno - 1
+        #         line = self.lines[line_number]
+        #         if "conftest import" in line or "import conftest" in line:
+        #             yield (
+        #                 line_number,
+        #                 elm.col_offset,
+        #                 NIFC001,
+        #                 self.name,
+        #             )
