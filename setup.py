@@ -17,6 +17,7 @@ setup(
             "UFN = UniqueFixturesNames:UniqueFixturesNames",
             "NIFC = NoImportFromConftest:NoImportFromConftest",
             "NIFT = NoImportFromTests:NoImportFromTests",
+            "UUC = UnusedCode:UnusedCode",
         ],
     },
 )
