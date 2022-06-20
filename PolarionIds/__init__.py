@@ -9,6 +9,7 @@ import re
 
 PID001 = "PID001: [{f_name} ({params})], Polarion ID is missing"
 PID002 = "PID002: [{f_name} {pid}], Polarion ID is wrong"
+PID003 = "PID003: [{f_name} {pid}], Polarion ID is duplicate"
 
 
 def iter_test_functions(tree):
@@ -92,6 +93,7 @@ class PolarionIds(object):
 
     def __init__(self, tree):
         self.tree = tree
+        self.polarion_ids = []
 
     def _non_decorated(self, f, params=""):
         yield (
@@ -117,6 +119,8 @@ class PolarionIds(object):
                 PID002.format(f_name=f.name, pid=polarion_id),
                 self.name,
             )
+        else:
+            yield from self._is_polarion_id_duplicate(f=f, polarion_id=polarion_id)
 
     def _non_decorated_fixture(self, f, polarion_id):
         param = ""
@@ -143,6 +147,8 @@ class PolarionIds(object):
                 PID002.format(f_name=f.name, pid=polarion_id.s),
                 self.name,
             )
+        else:
+            yield from self._is_polarion_id_duplicate(f=f, polarion_id=polarion_id)
 
     def _check_pytest_fixture_polarion_ids(self, f):
         exist = False
@@ -157,6 +163,17 @@ class PolarionIds(object):
                     yield from self._non_decorated_fixture(f=f, polarion_id=polarion_id)
         if not exist:
             yield from self._non_decorated(f=f)
+
+    def _is_polarion_id_duplicate(self, f, polarion_id):
+        if polarion_id in self.polarion_ids:
+            yield (
+                f.lineno,
+                f.col_offset,
+                PID003.format(f_name=f.name, pid=polarion_id),
+                self.name,
+            )
+        else:
+            self.polarion_ids.append(polarion_id)
 
     def run(self):
         """
@@ -236,7 +253,7 @@ class PolarionIds(object):
                                         yield from self._if_bad_pid(
                                             f=f, polarion_id=pk.value.args[0].s
                                         )
-                                        continue
+
                                     else:
                                         # In case no mark on test param
                                         yield from self._non_decorated(
