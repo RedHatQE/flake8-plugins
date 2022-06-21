@@ -95,6 +95,20 @@ class PolarionIds(object):
         self.tree = tree
         self.polarion_ids = []
 
+    @classmethod
+    def add_options(cls, option_manager):
+        option_manager.add_option(
+            long_option_name="--skip-duplicate-ids-check",
+            default="False",
+            parse_from_config=True,
+            comma_separated_list=False,
+            help="Skip check for duplicate Polarion Ids.",
+        )
+
+    @classmethod
+    def parse_options(cls, options):
+        cls.skip_duplicate_ids_check = ast.literal_eval(options.skip_duplicate_ids_check)
+
     def _non_decorated(self, f, params=""):
         yield (
             f.lineno,
@@ -165,6 +179,9 @@ class PolarionIds(object):
             yield from self._non_decorated(f=f)
 
     def _is_polarion_id_duplicate(self, f, polarion_id):
+        if self.skip_duplicate_ids_check:
+            return
+
         if polarion_id in self.polarion_ids:
             yield (
                 f.lineno,
