@@ -4,7 +4,6 @@
 flake8 extension to check import from conftest.py..
 """
 
-import ast
 
 NIFC001 = "NIFC: Import from conftest.py is not allowed."
 
@@ -29,7 +28,8 @@ class NoImportFromConftest(object):
         imports = [
             line
             for line in self.lines
-            if "conftest" in line and (line.startswith("import") or line.startswith("from"))
+            if "conftest" in line
+            and (line.startswith("import") or line.startswith("from"))
         ]
 
         for _import in imports:

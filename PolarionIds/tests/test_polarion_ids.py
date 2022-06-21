@@ -6,6 +6,7 @@ from subprocess import PIPE, Popen
 
 import pytest
 
+
 # Test function tests
 test_empty_polarion_id_content = """
 import pytest

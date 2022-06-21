@@ -7,6 +7,7 @@ flake8 extension check that every test has Polarion ID attach to it.
 import ast
 import re
 
+
 PID001 = "PID001: [{f_name} ({params})], Polarion ID is missing"
 PID002 = "PID002: [{f_name} {pid}], Polarion ID is wrong"
 PID003 = "PID003: [{f_name} {pid}], Polarion ID is duplicate"
@@ -107,7 +108,9 @@ class PolarionIds(object):
 
     @classmethod
     def parse_options(cls, options):
-        cls.skip_duplicate_ids_check = ast.literal_eval(options.skip_duplicate_polarion_ids_check)
+        cls.skip_duplicate_ids_check = ast.literal_eval(
+            options.skip_duplicate_polarion_ids_check
+        )
 
     def _non_decorated(self, f, params=""):
         yield (

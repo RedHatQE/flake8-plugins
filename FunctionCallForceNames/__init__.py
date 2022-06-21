@@ -7,6 +7,7 @@ flake8 plugin which verifies that all functions are called with arg=value (and n
 import ast
 import re
 
+
 FCFN001 = (
     "FCFN001: [{f_name}] function should be called with keywords arguments. {values}"
 )

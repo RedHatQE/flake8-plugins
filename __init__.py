@@ -6,6 +6,7 @@ flake8 extension to check import from conftest.py..
 
 import re
 
+
 NIFT001 = "NIFT: Import from tests is not allowed."
 
 
@@ -44,10 +45,12 @@ class NoImportFromTests(object):
         imports = [
             line
             for line in self.lines
-            if "tests" in line and (line.startswith("import") or line.startswith("from")) and "conftest" not in line
+            if "tests" in line
+            and (line.startswith("import") or line.startswith("from"))
+            and "conftest" not in line
         ]
         for _import in imports:
-            tests_list = re.findall(r'tests\.\w+', _import)
+            tests_list = re.findall(r"tests\.\w+", _import)
             tests_str = tests_list[0].replace(".", "/")
             if [imp for imp in self.exclude_imports if imp in _import]:
                 continue

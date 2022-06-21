@@ -3,6 +3,7 @@
 
 from setuptools import find_packages, setup
 
+
 setup(
     name="flake8-python-plugins",
     version="1.0",

@@ -7,6 +7,7 @@ flake8 extension to check unique fixtures names.
 import ast
 import subprocess
 
+
 UUC001 = "UUC001: [{f_name}], Is not used anywhere in the code."
 
 
@@ -71,7 +72,11 @@ class UnusedCode(object):
         Check if fixture name is unique.
         """
         for func in self._iter_functions():
-            if [func.name for ignore_prefix in self.uuc_ignore_prefix if func.name.startswith(ignore_prefix)]:
+            if [
+                func.name
+                for ignore_prefix in self.uuc_ignore_prefix
+                if func.name.startswith(ignore_prefix)
+            ]:
                 continue
 
             if self.is_fixture_autouse(func=func):
