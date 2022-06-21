@@ -98,7 +98,7 @@ class PolarionIds(object):
     @classmethod
     def add_options(cls, option_manager):
         option_manager.add_option(
-            long_option_name="--skip-duplicate-ids-check",
+            long_option_name="--skip-duplicate-polarion-ids-check",
             default="False",
             parse_from_config=True,
             comma_separated_list=False,
@@ -107,7 +107,7 @@ class PolarionIds(object):
 
     @classmethod
     def parse_options(cls, options):
-        cls.skip_duplicate_ids_check = ast.literal_eval(options.skip_duplicate_ids_check)
+        cls.skip_duplicate_ids_check = ast.literal_eval(options.skip_duplicate_polarion_ids_check)
 
     def _non_decorated(self, f, params=""):
         yield (
