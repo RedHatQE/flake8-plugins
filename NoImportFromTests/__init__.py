@@ -27,7 +27,7 @@ class NoImportFromTests(object):
     @classmethod
     def add_options(cls, option_manager):
         option_manager.add_option(
-            long_option_name="--nift_exclude_imports",
+            long_option_name="--nit_exclude_imports",
             default="",
             parse_from_config=True,
             comma_separated_list=True,

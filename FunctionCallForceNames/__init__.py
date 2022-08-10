@@ -27,7 +27,7 @@ class FunctionCallForceNames(object):
     @classmethod
     def add_options(cls, option_manager):
         option_manager.add_option(
-            long_option_name="--fcfn_exclude_functions",
+            long_option_name="--fcn_exclude_functions",
             default="",
             parse_from_config=True,
             comma_separated_list=True,
