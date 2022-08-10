@@ -1,0 +1,18 @@
+[flake8]
+max-line-length =
+    120
+exclude =
+    doc,
+    .tox,
+    .git,
+    .yml,
+    Pipfile.*,
+    docs/*,
+    .cache/*
+
+fcn_exclude_functions =
+    ast,
+    re,
+
+enable-extensions =
+    FCN,
