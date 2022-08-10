@@ -2,7 +2,7 @@
 A collection of flake8 plugins for python code.
 
 
-## FunctionCallForceNames (FCFN)
+## FunctionCallForceNames (FCN)
 A plugin to force call functions with keywords arguments.
 
 ## PolarionIds (PID)
@@ -15,11 +15,11 @@ A plugin to force unique fixtures names in pytest.
 All plugins are off by default and can be enabled by:
 1. In .flake8 under enable-extensions section
    enable-extensions =
-    FCFN,
+    FCN,
     UFN,
     PID,
 2. When calling flake8 cli:
-   python -m flake8 --enable-extensions=UFN,FCFN,PID
+   python -m flake8 --enable-extensions=UFN,FCN,PID
 
 ## Code check
 We use pre-commit for code check.

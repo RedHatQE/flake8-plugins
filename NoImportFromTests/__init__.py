@@ -7,7 +7,7 @@ flake8 extension to check import from conftest.py..
 import re
 
 
-NIFT001 = "NIFT: Import from tests is not allowed."
+NIT001 = "NIT001: Import from tests is not allowed."
 
 
 class NoImportFromTests(object):
@@ -59,6 +59,6 @@ class NoImportFromTests(object):
                 yield (
                     self.lines.index(_import) + 1,
                     1,
-                    NIFT001,
+                    NIT001,
                     self.name,
                 )

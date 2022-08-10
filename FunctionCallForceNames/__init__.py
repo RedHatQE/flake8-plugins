@@ -8,9 +8,7 @@ import ast
 import re
 
 
-FCFN001 = (
-    "FCFN001: [{f_name}] function should be called with keywords arguments. {values}"
-)
+FCN001 = "FCN001: [{f_name}] function should be called with keywords arguments. {values}"
 
 
 class FunctionCallForceNames(object):
@@ -50,7 +48,9 @@ class FunctionCallForceNames(object):
         for builtin in [*__builtins__]:
             try:
                 funcs = set(
-                    func for func in eval(builtin).__dict__ if not func.startswith("_")
+                    func
+                    for func in eval(builtin).__dict__
+                    if not func.startswith("_")
                 )
                 if funcs:
                     functions.update(funcs)
@@ -74,9 +74,7 @@ class FunctionCallForceNames(object):
                     )
 
             if isinstance(arg, ast.Dict):
-                values += (
-                    f"value:  {ast.Dict} (line:{arg.lineno} column:{arg.col_offset})"
-                )
+                values += f"value:  {ast.Dict} (line:{arg.lineno} column:{arg.col_offset})"
 
             else:
                 values += (
@@ -143,7 +141,10 @@ class FunctionCallForceNames(object):
                 for _name in name.split("."):
                     if _name in self.exclude_functions:
                         return True
-            return self._get_func_name(elm=elm, attr=True) in self.exclude_functions
+            return (
+                self._get_func_name(elm=elm, attr=True)
+                in self.exclude_functions
+            )
 
         return name in self.exclude_functions
 
@@ -161,7 +162,9 @@ class FunctionCallForceNames(object):
             _args = [
                 ar
                 for ar in _args
-                if not (isinstance(ar, ast.Starred) or isinstance(ar, ast.JoinedStr))
+                if not (
+                    isinstance(ar, ast.Starred) or isinstance(ar, ast.JoinedStr)
+                )
             ]
             if _args:
                 res[elm] = _args
@@ -215,8 +218,9 @@ class FunctionCallForceNames(object):
                 if values:
                     yield (
                         getattr(elm_key, "lineno", None) or elm.value.lineno,
-                        getattr(elm_key, "col_offset", None) or elm.value.col_offset,
-                        FCFN001.format(f_name=name, values=values),
+                        getattr(elm_key, "col_offset", None)
+                        or elm.value.col_offset,
+                        FCN001.format(f_name=name, values=values),
                         self.name,
                     )
 

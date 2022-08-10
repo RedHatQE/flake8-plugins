@@ -13,11 +13,11 @@ setup(
     install_requires=["flake8"],
     entry_points={
         "flake8.extension": [
-            "FCFN = FunctionCallForceNames:FunctionCallForceNames",
+            "FCN = FunctionCallForceNames:FunctionCallForceNames",
             "PID = PolarionIds:PolarionIds",
             "UFN = UniqueFixturesNames:UniqueFixturesNames",
-            "NIFC = NoImportFromConftest:NoImportFromConftest",
-            "NIFT = NoImportFromTests:NoImportFromTests",
+            "NIC = NoImportFromConftest:NoImportFromConftest",
+            "NIT = NoImportFromTests:NoImportFromTests",
             "UUC = UnusedCode:UnusedCode",
         ],
     },
