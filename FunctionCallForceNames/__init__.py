@@ -37,7 +37,7 @@ class FunctionCallForceNames(object):
     @classmethod
     def parse_options(cls, options):
         cls.exclude_functions = (
-            options.fcfn_exclude_functions
+            options.fcn_exclude_functions
             + [*__builtins__]
             + cls.get_builtins_sub_functions()
         )

@@ -12,7 +12,7 @@ NIT001 = "NIT001: Import from tests is not allowed."
 
 class NoImportFromTests(object):
     """
-    flake8 extension to check import from tests..
+    flake8 extension to check import from tests.
     """
 
     off_by_default = True
@@ -36,7 +36,7 @@ class NoImportFromTests(object):
 
     @classmethod
     def parse_options(cls, options):
-        cls.exclude_imports = options.nift_exclude_imports
+        cls.exclude_imports = options.nit_exclude_imports
 
     def run(self):
         """
