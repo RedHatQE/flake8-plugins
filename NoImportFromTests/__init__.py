@@ -52,10 +52,11 @@ class NoImportFromTests(object):
         for _import in imports:
             tests_list = re.findall(r"tests\.\w+", _import)
             tests_str = tests_list[0].replace(".", "/")
+            import_from_test = re.findall(r".test_.\w+", _import)
             if [imp for imp in self.exclude_imports if imp in _import]:
                 continue
 
-            if tests_str not in self.filename:
+            if tests_str not in self.filename or import_from_test:
                 yield (
                     self.lines.index(_import) + 1,
                     1,
