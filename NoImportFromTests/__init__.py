@@ -54,9 +54,12 @@ class NoImportFromTests(object):
             if self._is_import(_import=_import)
         ]
         for _import in imports:
-            try:
+            import_name = None
+            if isinstance(_import, ast.ImportFrom):
                 import_name = _import.module
-            except AttributeError:
+                if not import_name:
+                    import_name = _import.names[-1].name
+            elif isinstance(_import, ast.Import):
                 import_name = _import.names[-1].name
 
             import_name_end = import_name.split(".")[-1]
