@@ -3,8 +3,7 @@
 """
 flake8 extension to check import from conftest.py..
 """
-
-import re
+import ast
 
 
 NIT001 = "NIT001: Import from tests is not allowed."
@@ -38,28 +37,33 @@ class NoImportFromTests(object):
     def parse_options(cls, options):
         cls.exclude_imports = options.nit_exclude_imports
 
+    @staticmethod
+    def _is_import(_import):
+        if isinstance(_import, ast.Import) or isinstance(
+            _import, ast.ImportFrom
+        ):
+            return _import
+
     def run(self):
         """
         Check if file import from tests
         """
         imports = [
-            line
-            for line in self.lines
-            if "tests" in line
-            and (line.startswith("import") or line.startswith("from"))
-            and "conftest" not in line
+            _import
+            for _import in self.tree.body
+            if self._is_import(_import=_import)
         ]
         for _import in imports:
-            tests_list = re.findall(r"tests\.\w+", _import)
-            tests_str = tests_list[0].replace(".", "/")
-            import_from_test = re.findall(r".test_.\w+", _import)
-            if [imp for imp in self.exclude_imports if imp in _import]:
-                continue
+            try:
+                import_name = _import.module
+            except AttributeError:
+                import_name = _import.names[-1].name
 
-            if tests_str not in self.filename or import_from_test:
+            import_name_end = import_name.split(".")[-1]
+            if import_name_end.startswith("test_"):
                 yield (
-                    self.lines.index(_import) + 1,
-                    1,
+                    _import.lineno,
+                    _import.col_offset,
                     NIT001,
                     self.name,
                 )
