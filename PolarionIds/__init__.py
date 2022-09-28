@@ -11,6 +11,7 @@ import re
 PID001 = "PID001: [{f_name} ({params})], Polarion ID is missing"
 PID002 = "PID002: [{f_name} {pid}], Polarion ID is wrong"
 PID003 = "PID003: [{f_name} {pid}], Polarion ID is duplicate"
+PID004 = "PID004: [{f_name} {pid}], Test have multiple Polarion IDs"
 
 
 def iter_test_functions(tree):
@@ -134,6 +135,16 @@ class PolarionIds(object):
             self.name,
         )
 
+    def _multiple_ids(self, f, polarion_args):
+        yield (
+            f.lineno,
+            f.col_offset,
+            PID004.format(
+                f_name=f.name, pid=[_arg.s for _arg in polarion_args]
+            ),
+            self.name,
+        )
+
     def _if_bad_pid(self, f, polarion_id):
         if not re.match(r"CNV-\d+", polarion_id):
             yield (
@@ -239,6 +250,10 @@ class PolarionIds(object):
             for deco in sorted_doce_list:
                 if deco.func.attr == "polarion":
                     polarion_mark_exists = True
+                    if len(deco.args) > 1:
+                        yield from self._multiple_ids(
+                            f=f, polarion_args=deco.args
+                        )
                     if deco.args:
                         yield from self._if_bad_pid(
                             f=f, polarion_id=deco.args[0].s
@@ -276,6 +291,12 @@ class PolarionIds(object):
                                     # In case of multiple marks on test param
                                     if isinstance(pk.value, ast.Tuple):
                                         for elt_val in pk.value.elts:
+                                            if len(elt_val.args) > 1:
+                                                yield from self._multiple_ids(
+                                                    f=f,
+                                                    polarion_args=elt_val.args,
+                                                )
+
                                             if elt_val.func.attr == "polarion":
                                                 polarion_mark_exists = True
                                                 yield from self._if_bad_pid(
@@ -290,6 +311,10 @@ class PolarionIds(object):
                                         pk.arg == "marks"
                                         and pk.value.func.attr == "polarion"
                                     ):
+                                        if len(pk.value.args) > 1:
+                                            yield from self._multiple_ids(
+                                                f=f, polarion_args=pk.value.args
+                                            )
                                         polarion_mark_exists = True
                                         yield from self._if_bad_pid(
                                             f=f, polarion_id=pk.value.args[0].s

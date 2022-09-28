@@ -205,6 +205,27 @@ def test_fixture_parameterized(params_fixture, dummy):
     pass
 """
 
+test_multiple_polarion_id_content = """
+import pytest
+
+
+@pytest.mark.polarion("CNV-0001", "CNV-0002")
+def test_multiple_polarion_id():
+    pass
+"""
+
+test_parameterized_with_multiple_polarion_id_content = """
+import pytest
+
+
+@pytest.mark.parametrize(
+    "param",
+    [pytest.param("parametrize_with_multiple_polarion_id", marks=(pytest.mark.polarion("CNV-0001", "CNV-0002")))]
+)
+def test_parameterized_with_multiple_polarion_id(param):
+    pass
+"""
+
 
 def prepare_test_file(tmp_test_file, test_name, file_content):
     tmp_test_file.write(file_content.format(test_name=test_name))
@@ -239,6 +260,12 @@ def check_pid002(flake8_out):
     assert re.findall(r"PID002: .*, Polarion ID is wrong", flake8_out)
 
 
+def check_pid004(flake8_out):
+    assert re.findall(
+        r"PID004: .*, Test have multiple Polarion IDs", flake8_out
+    )
+
+
 # Test function tests
 def test_empty_polarion_id(tmp_test_file):
     test_name = "test_empty_polarion_id"
@@ -247,6 +274,24 @@ def test_empty_polarion_id(tmp_test_file):
     )
     out = check_polarion_ids_plugin(test_file_name)
     check_pid001(out)
+
+
+def test_multiple_polarion_id(tmp_test_file):
+    test_name = "test_multiple_polarion_id"
+    test_file_name = prepare_test_file(
+        tmp_test_file, test_name, eval(f"{test_name}_content")
+    )
+    out = check_polarion_ids_plugin(test_file_name)
+    check_pid004(out)
+
+
+def test_parametrize_with_multiple_polarion_id(tmp_test_file):
+    test_name = "test_parameterized_with_multiple_polarion_id"
+    test_file_name = prepare_test_file(
+        tmp_test_file, test_name, eval(f"{test_name}_content")
+    )
+    out = check_polarion_ids_plugin(test_file_name)
+    check_pid004(out)
 
 
 def test_no_polarion_id(tmp_test_file):
