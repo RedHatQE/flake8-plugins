@@ -90,6 +90,10 @@ class FunctionCallForceNames(object):
                 yield elm_func_attr
 
         if isinstance(elm, ast.With):
+            _line = self.lines[elm.lineno - 1]
+            #  If ( not in line this is not a function call.
+            if "(" not in _line:
+                return
 
             def _parse_name(lineno):
                 name = re.findall(r"[a-z].*\(|[A-Z].*\(", lineno.strip())
@@ -97,7 +101,7 @@ class FunctionCallForceNames(object):
                     _parse_name(lineno=self.lines[elm.lineno])
                 return name
 
-            name = _parse_name(lineno=self.lines[elm.lineno - 1])
+            name = _parse_name(lineno=_line)
             if name:
                 yield name[0].strip("(").strip("with ")
 
