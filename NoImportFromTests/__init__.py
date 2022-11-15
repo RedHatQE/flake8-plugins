@@ -4,6 +4,7 @@
 flake8 extension to check import from conftest.py..
 """
 import ast
+import re
 
 
 NIT001 = "NIT001: Import from tests is not allowed."
@@ -68,21 +69,35 @@ class NoImportFromTests(object):
                 import_name = _import.names[-1].name
 
             split_import_name = import_name.split(".")
-            base_import_path = split_import_name[0]
+            _base_import_path = split_import_name[0]
             import_from = split_import_name[1:]
             if self._import_in_exclude(import_from=import_from):
                 continue
 
-            _base_file_name_path = self.filename.split(f"/{base_import_path}/")[
-                -1
-            ].split("/")
+            split_seq = 1
+            base_import_path = re.findall(
+                rf"/{_base_import_path}/", self.filename
+            )
+            if not base_import_path:
+                split_seq = 1
+                base_import_path = re.findall(
+                    rf"^{_base_import_path}/", self.filename
+                )
+
+            if not base_import_path:
+                continue
+
+            base_import_path = base_import_path[0]
+            _base_file_name_path = self.filename.split(
+                f"{base_import_path}", split_seq
+            )[-1].split("/")
             base_file_name_path = list(
                 filter(lambda x: x, _base_file_name_path)
             )
             import_name_end = import_name.split(".")[-1]
             if (
                 import_name_end.startswith("test_")
-                or base_import_path == "tests"
+                or _base_import_path == "tests"
             ):
                 if import_from and base_file_name_path:
                     if import_from[0] != base_file_name_path[0]:
