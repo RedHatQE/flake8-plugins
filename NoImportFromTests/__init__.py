@@ -44,16 +44,21 @@ class NoImportFromTests(object):
         ):
             return _import
 
+    def _all_imports(self):
+        for _import in self.tree.body:
+            if self._is_import(_import=_import):
+                yield _import
+
+    def _import_in_exclude(self, import_from):
+        return any(
+            [_imp for _imp in import_from if _imp in self.exclude_imports]
+        )
+
     def run(self):
         """
         Check if file import from tests
         """
-        imports = [
-            _import
-            for _import in self.tree.body
-            if self._is_import(_import=_import)
-        ]
-        for _import in imports:
+        for _import in self._all_imports():
             import_name = None
             if isinstance(_import, ast.ImportFrom):
                 import_name = _import.module
@@ -62,11 +67,35 @@ class NoImportFromTests(object):
             elif isinstance(_import, ast.Import):
                 import_name = _import.names[-1].name
 
+            split_import_name = import_name.split(".")
+            base_import_path = split_import_name[0]
+            import_from = split_import_name[1:]
+            if self._import_in_exclude(import_from=import_from):
+                continue
+
+            _base_file_name_path = self.filename.split(f"/{base_import_path}/")[
+                -1
+            ].split("/")
+            base_file_name_path = list(
+                filter(lambda x: x, _base_file_name_path)
+            )
             import_name_end = import_name.split(".")[-1]
-            if import_name_end.startswith("test_"):
-                yield (
-                    _import.lineno,
-                    _import.col_offset,
-                    NIT001,
-                    self.name,
-                )
+            if (
+                import_name_end.startswith("test_")
+                or base_import_path == "tests"
+            ):
+                if import_from and base_file_name_path:
+                    if import_from[0] != base_file_name_path[0]:
+                        yield (
+                            _import.lineno,
+                            _import.col_offset,
+                            NIT001,
+                            self.name,
+                        )
+                else:
+                    yield (
+                        _import.lineno,
+                        _import.col_offset,
+                        NIT001,
+                        self.name,
+                    )
