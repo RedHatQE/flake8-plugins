@@ -50,10 +50,8 @@ class NoImportFromTests(object):
             if self._is_import(_import=_import):
                 yield _import
 
-    def _import_in_exclude(self, import_from):
-        return any(
-            [_imp for _imp in import_from if _imp in self.exclude_imports]
-        )
+    def _import_in_exclude(self, imports):
+        return any([_imp for _imp in imports if _imp in self.exclude_imports])
 
     def run(self):
         """
@@ -71,7 +69,10 @@ class NoImportFromTests(object):
             split_import_name = import_name.split(".")
             _base_import_path = split_import_name[0]
             import_from = split_import_name[1:]
-            if self._import_in_exclude(import_from=import_from):
+            _imports_to_check_for_excluding = [import_name]
+            if import_from:
+                _imports_to_check_for_excluding.append(import_from[0])
+            if self._import_in_exclude(imports=_imports_to_check_for_excluding):
                 continue
 
             split_seq = 1
