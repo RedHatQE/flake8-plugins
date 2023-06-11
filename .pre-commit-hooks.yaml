@@ -1,9 +1,0 @@
--   id: flake8-plugins
-    name: flake8-plugins
-    entry: flake8
-    language: python
-    'types': [python]
-    args: []
-    require_serial: false
-    additional_dependencies: []
-    minimum_pre_commit_version: '0'
