@@ -44,10 +44,7 @@ class UnusedCode(object):
                 if not hasattr(deco, "func"):
                     continue
 
-                if (
-                    deco.func.attr == "fixture"
-                    and deco.func.value.id == "pytest"
-                ):
+                if deco.func.attr == "fixture" and deco.func.value.id == "pytest":
                     for _key in deco.keywords:
                         if _key.arg == "autouse":
                             return _key.value.s
@@ -75,19 +72,13 @@ class UnusedCode(object):
         Check if fixture name is unique.
         """
         for func in self._iter_functions():
-            if [
-                func.name
-                for ignore_prefix in self.uuc_ignore_prefix
-                if func.name.startswith(ignore_prefix)
-            ]:
+            if [func.name for ignore_prefix in self.uuc_ignore_prefix if func.name.startswith(ignore_prefix)]:
                 continue
 
             if self.is_fixture_autouse(func=func):
                 continue
 
-            _used = subprocess.check_output(
-                f"git grep {func.name} | wc -l", shell=True
-            )
+            _used = subprocess.check_output(f"git grep {func.name} | wc -l", shell=True)
             used = int(_used.strip())
             if used < 2:
                 yield (

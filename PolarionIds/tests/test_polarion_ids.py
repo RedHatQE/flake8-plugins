@@ -235,9 +235,7 @@ def prepare_test_file(tmp_test_file, test_name, file_content):
 
 @pytest.fixture()
 def tmp_test_file(tmpdir):
-    test_file_name = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), f"{tmpdir}/test_file.py"
-    )
+    test_file_name = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"{tmpdir}/test_file.py")
     with open(test_file_name, "w+") as test_file:
         yield test_file
     os.remove(test_file_name)
@@ -261,62 +259,48 @@ def check_pid002(flake8_out):
 
 
 def check_pid004(flake8_out):
-    assert re.findall(
-        r"PID004: .*, Test have multiple Polarion IDs", flake8_out
-    )
+    assert re.findall(r"PID004: .*, Test have multiple Polarion IDs", flake8_out)
 
 
 # Test function tests
 def test_empty_polarion_id(tmp_test_file):
     test_name = "test_empty_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     check_pid001(out)
 
 
 def test_multiple_polarion_id(tmp_test_file):
     test_name = "test_multiple_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     check_pid004(out)
 
 
 def test_parametrize_with_multiple_polarion_id(tmp_test_file):
     test_name = "test_parameterized_with_multiple_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     check_pid004(out)
 
 
 def test_no_polarion_id(tmp_test_file):
     test_name = "test_no_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     check_pid001(out)
 
 
 def test_wrong_polarion_id(tmp_test_file):
     test_name = "test_wrong_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     check_pid002(out)
 
 
 def test_with_polarion_id(tmp_test_file):
     test_name = "test_with_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     assert not out
 
@@ -324,36 +308,28 @@ def test_with_polarion_id(tmp_test_file):
 # Test parameterized tests
 def test_parameterized_no_polarion_id(tmp_test_file):
     test_name = "test_parameterized_no_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     check_pid001(out)
 
 
 def test_parameterized_wrong_polarion_id(tmp_test_file):
     test_name = "test_parameterized_wrong_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     check_pid002(out)
 
 
 def test_parameterized_with_polarion_id(tmp_test_file):
     test_name = "test_parameterized_with_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     assert not out
 
 
 def test_mixed_parameterized(tmp_test_file):
     test_name = "test_mixed_parameterized"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
 
     out = check_polarion_ids_plugin(test_file_name)
     out_lines = out.splitlines()
@@ -367,36 +343,28 @@ def test_mixed_parameterized(tmp_test_file):
 # Test tests in class
 def test_class_no_polarion_id(tmp_test_file):
     test_name = "test_class_no_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     check_pid001(out)
 
 
 def test_class_wrong_polarion_id(tmp_test_file):
     test_name = "test_class_wrong_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     check_pid002(out)
 
 
 def test_class_with_polarion_id(tmp_test_file):
     test_name = "test_class_with_polarion_id"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
     out = check_polarion_ids_plugin(test_file_name)
     assert not out
 
 
 def test_class_parameterized_mixed(tmp_test_file):
     test_name = "test_class_parameterized_mixed"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
 
     out = check_polarion_ids_plugin(test_file_name)
     out_lines = out.splitlines()
@@ -410,9 +378,7 @@ def test_class_parameterized_mixed(tmp_test_file):
 # Polarion ID on parameterized fixture
 def test_fixture_parameterized(tmp_test_file):
     test_name = "test_fixture_parameterized"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
 
     out = check_polarion_ids_plugin(test_file_name)
     out_lines = out.splitlines()
@@ -426,9 +392,7 @@ def test_fixture_parameterized(tmp_test_file):
 
 def test_fixture_parameterized_as_list(tmp_test_file):
     test_name = "test_fixture_parameterized_as_list"
-    test_file_name = prepare_test_file(
-        tmp_test_file, test_name, eval(f"{test_name}_content")
-    )
+    test_file_name = prepare_test_file(tmp_test_file, test_name, eval(f"{test_name}_content"))
 
     out = check_polarion_ids_plugin(test_file_name)
     out_lines = out.splitlines()

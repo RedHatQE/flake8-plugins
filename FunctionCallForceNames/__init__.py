@@ -36,22 +36,14 @@ class FunctionCallForceNames(object):
 
     @classmethod
     def parse_options(cls, options):
-        cls.exclude_functions = (
-            options.fcn_exclude_functions
-            + [*__builtins__]
-            + cls.get_builtins_sub_functions()
-        )
+        cls.exclude_functions = options.fcn_exclude_functions + [*__builtins__] + cls.get_builtins_sub_functions()
 
     @classmethod
     def get_builtins_sub_functions(cls):
         functions = set()
         for builtin in [*__builtins__]:
             try:
-                funcs = set(
-                    func
-                    for func in eval(builtin).__dict__
-                    if not func.startswith("_")
-                )
+                funcs = set(func for func in eval(builtin).__dict__ if not func.startswith("_"))
                 if funcs:
                     functions.update(funcs)
             except AttributeError:
@@ -78,8 +70,7 @@ class FunctionCallForceNames(object):
 
             else:
                 values += (
-                    f"value: {self._get_func_name(elm=arg, attr=True)} "
-                    f"(line:{arg.lineno} column:{arg.col_offset})"
+                    f"value: {self._get_func_name(elm=arg, attr=True)} " f"(line:{arg.lineno} column:{arg.col_offset})"
                 )
         return values
 
@@ -106,11 +97,7 @@ class FunctionCallForceNames(object):
                 yield name[0].strip("(").strip("with ")
 
             for elm_body in elm.body:
-                if (
-                    isinstance(elm_body, ast.Call)
-                    or isinstance(elm_body, ast.Expr)
-                    or isinstance(elm_body, ast.Assign)
-                ):
+                if isinstance(elm_body, ast.Call) or isinstance(elm_body, ast.Expr) or isinstance(elm_body, ast.Assign):
                     yield from self._get_elm_func_id(elm=elm_body, attr=attr)
 
         elm_func_id = getattr(elm, "id", None)
@@ -148,10 +135,7 @@ class FunctionCallForceNames(object):
                 for _name in name.split("."):
                     if _name in self.exclude_functions:
                         return True
-            return (
-                self._get_func_name(elm=elm, attr=True)
-                in self.exclude_functions
-            )
+            return self._get_func_name(elm=elm, attr=True) in self.exclude_functions
 
         return name in self.exclude_functions
 
@@ -166,13 +150,7 @@ class FunctionCallForceNames(object):
 
         def _filter_args(elm):
             _args = _find_args(elm=elm)
-            _args = [
-                ar
-                for ar in _args
-                if not (
-                    isinstance(ar, ast.Starred) or isinstance(ar, ast.JoinedStr)
-                )
-            ]
+            _args = [ar for ar in _args if not (isinstance(ar, ast.Starred) or isinstance(ar, ast.JoinedStr))]
             if _args:
                 res[elm] = _args
 
@@ -224,8 +202,7 @@ class FunctionCallForceNames(object):
                 if values:
                     yield (
                         getattr(elm_key, "lineno", None) or elm.value.lineno,
-                        getattr(elm_key, "col_offset", None)
-                        or elm.value.col_offset,
+                        getattr(elm_key, "col_offset", None) or elm.value.col_offset,
                         FCN001.format(f_name=name, values=values),
                         self.name,
                     )
@@ -247,7 +224,6 @@ class FunctionCallForceNames(object):
             else:
                 if hasattr(elm, "value"):
                     yield from self._get_elm_call(elm=elm.value)
-
 
     def _get_func_call(self):
         for elm in self._get_final_elm(elm=self.tree):

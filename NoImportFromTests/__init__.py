@@ -3,6 +3,7 @@
 """
 flake8 extension to check import from conftest.py..
 """
+
 import ast
 import re
 
@@ -40,9 +41,7 @@ class NoImportFromTests(object):
 
     @staticmethod
     def _is_import(_import):
-        if isinstance(_import, ast.Import) or isinstance(
-            _import, ast.ImportFrom
-        ):
+        if isinstance(_import, ast.Import) or isinstance(_import, ast.ImportFrom):
             return _import
 
     def _all_imports(self):
@@ -76,30 +75,19 @@ class NoImportFromTests(object):
                 continue
 
             split_seq = 1
-            base_import_path = re.findall(
-                rf"/{_base_import_path}/", self.filename
-            )
+            base_import_path = re.findall(rf"/{_base_import_path}/", self.filename)
             if not base_import_path:
                 split_seq = 1
-                base_import_path = re.findall(
-                    rf"^{_base_import_path}/", self.filename
-                )
+                base_import_path = re.findall(rf"^{_base_import_path}/", self.filename)
 
             if not base_import_path:
                 continue
 
             base_import_path = base_import_path[0]
-            _base_file_name_path = self.filename.split(
-                f"{base_import_path}", split_seq
-            )[-1].split("/")
-            base_file_name_path = list(
-                filter(lambda x: x, _base_file_name_path)
-            )
+            _base_file_name_path = self.filename.split(f"{base_import_path}", split_seq)[-1].split("/")
+            base_file_name_path = list(filter(lambda x: x, _base_file_name_path))
             import_name_end = import_name.split(".")[-1]
-            if (
-                import_name_end.startswith("test_")
-                or _base_import_path == "tests"
-            ):
+            if import_name_end.startswith("test_") or _base_import_path == "tests":
                 if import_from and base_file_name_path:
                     if import_from[0] != base_file_name_path[0]:
                         yield (

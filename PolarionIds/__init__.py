@@ -67,24 +67,15 @@ def iter_polarion_ids_from_pytest_fixture(tree, name):
                             has_polarion_id = False
                             for deco_elts_keyword in deco_elts.keywords:
                                 if deco_elts_keyword.arg == "marks":
-                                    if isinstance(
-                                        deco_elts_keyword.value, ast.Tuple
-                                    ):
-                                        for (
-                                            dekv
-                                        ) in deco_elts_keyword.value.elts:
+                                    if isinstance(deco_elts_keyword.value, ast.Tuple):
+                                        for dekv in deco_elts_keyword.value.elts:
                                             if dekv.func.attr == "polarion":
                                                 has_polarion_id = True
                                                 yield dekv.args[0]
                                     else:
-                                        if (
-                                            deco_elts_keyword.value.func.attr
-                                            == "polarion"
-                                        ):
+                                        if deco_elts_keyword.value.func.attr == "polarion":
                                             has_polarion_id = True
-                                            yield deco_elts_keyword.value.args[
-                                                0
-                                            ]
+                                            yield deco_elts_keyword.value.args[0]
 
                             if not has_polarion_id:
                                 yield deco_elts
@@ -115,9 +106,7 @@ class PolarionIds(object):
 
     @classmethod
     def parse_options(cls, options):
-        cls.skip_duplicate_ids_check = ast.literal_eval(
-            options.skip_duplicate_polarion_ids_check
-        )
+        cls.skip_duplicate_ids_check = ast.literal_eval(options.skip_duplicate_polarion_ids_check)
 
     def _non_decorated(self, f, params=""):
         yield (
@@ -139,9 +128,7 @@ class PolarionIds(object):
         yield (
             f.lineno,
             f.col_offset,
-            PID004.format(
-                f_name=f.name, pid=[_arg.s for _arg in polarion_args]
-            ),
+            PID004.format(f_name=f.name, pid=[_arg.s for _arg in polarion_args]),
             self.name,
         )
 
@@ -154,9 +141,7 @@ class PolarionIds(object):
                 self.name,
             )
         else:
-            yield from self._is_polarion_id_duplicate(
-                f=f, polarion_id=polarion_id
-            )
+            yield from self._is_polarion_id_duplicate(f=f, polarion_id=polarion_id)
 
     def _non_decorated_fixture(self, f, polarion_id):
         param = ""
@@ -184,25 +169,17 @@ class PolarionIds(object):
                 self.name,
             )
         else:
-            yield from self._is_polarion_id_duplicate(
-                f=f, polarion_id=polarion_id
-            )
+            yield from self._is_polarion_id_duplicate(f=f, polarion_id=polarion_id)
 
     def _check_pytest_fixture_polarion_ids(self, f):
         exist = False
         for f_arg in f.args.args:
-            for polarion_id in iter_polarion_ids_from_pytest_fixture(
-                self.tree, f_arg.arg
-            ):
+            for polarion_id in iter_polarion_ids_from_pytest_fixture(self.tree, f_arg.arg):
                 exist = True
                 if isinstance(polarion_id, ast.Str):
-                    yield from self._if_bad_pid_fixture(
-                        f=f, polarion_id=polarion_id
-                    )
+                    yield from self._if_bad_pid_fixture(f=f, polarion_id=polarion_id)
                 else:
-                    yield from self._non_decorated_fixture(
-                        f=f, polarion_id=polarion_id
-                    )
+                    yield from self._non_decorated_fixture(f=f, polarion_id=polarion_id)
         if not exist:
             yield from self._non_decorated(f=f)
 
@@ -237,10 +214,7 @@ class PolarionIds(object):
                 if not hasattr(deco, "func"):
                     continue
 
-                if (
-                    deco.func.value.value.id == "pytest"
-                    and deco.func.value.attr == "mark"
-                ):
+                if deco.func.value.value.id == "pytest" and deco.func.value.attr == "mark":
                     if deco.func.attr == "polarion":
                         sorted_doce_list.insert(0, deco)
 
@@ -251,13 +225,9 @@ class PolarionIds(object):
                 if deco.func.attr == "polarion":
                     polarion_mark_exists = True
                     if len(deco.args) > 1:
-                        yield from self._multiple_ids(
-                            f=f, polarion_args=deco.args
-                        )
+                        yield from self._multiple_ids(f=f, polarion_args=deco.args)
                     if deco.args:
-                        yield from self._if_bad_pid(
-                            f=f, polarion_id=deco.args[0].s
-                        )
+                        yield from self._if_bad_pid(f=f, polarion_id=deco.args[0].s)
                     else:
                         yield from self._non_decorated(f=f)
                     break
@@ -273,15 +243,11 @@ class PolarionIds(object):
                                     continue
 
                                 if not isinstance(elt, ast.Call):
-                                    yield from self._non_decorated_elt(
-                                        f=f, elt=elt, params=elt.s
-                                    )
+                                    yield from self._non_decorated_elt(f=f, elt=elt, params=elt.s)
                                     continue
 
                                 if not elt.keywords:
-                                    yield from self._non_decorated_elt(
-                                        f=f, elt=elt
-                                    )
+                                    yield from self._non_decorated_elt(f=f, elt=elt)
 
                                 for pk in elt.keywords:
                                     # In case parametrize have id=
@@ -301,30 +267,19 @@ class PolarionIds(object):
                                                 polarion_mark_exists = True
                                                 yield from self._if_bad_pid(
                                                     f=f,
-                                                    polarion_id=elt_val.args[
-                                                        0
-                                                    ].s,
+                                                    polarion_id=elt_val.args[0].s,
                                                 )
 
                                     # In case one mark on test param
-                                    elif (
-                                        pk.arg == "marks"
-                                        and pk.value.func.attr == "polarion"
-                                    ):
+                                    elif pk.arg == "marks" and pk.value.func.attr == "polarion":
                                         if len(pk.value.args) > 1:
-                                            yield from self._multiple_ids(
-                                                f=f, polarion_args=pk.value.args
-                                            )
+                                            yield from self._multiple_ids(f=f, polarion_args=pk.value.args)
                                         polarion_mark_exists = True
-                                        yield from self._if_bad_pid(
-                                            f=f, polarion_id=pk.value.args[0].s
-                                        )
+                                        yield from self._if_bad_pid(f=f, polarion_id=pk.value.args[0].s)
 
                                     else:
                                         # In case no mark on test param
-                                        yield from self._non_decorated(
-                                            f=f, params=elt.args[0].s
-                                        )
+                                        yield from self._non_decorated(f=f, params=elt.args[0].s)
                 else:
                     yield from self._non_decorated(f=f)
 
