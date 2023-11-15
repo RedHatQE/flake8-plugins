@@ -1,4 +1,6 @@
 [flake8]
+select=FCN,M511
+
 exclude =
     doc,
     .tox,

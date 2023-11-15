@@ -126,6 +126,9 @@ class FunctionCallForceNames(object):
             yield from self._get_elm_func_id(elm=elm_val_func, attr=attr)
 
         elm_val = getattr(elm, "value", None)
+        if getattr(elm_val, "attr", None):
+            yield from self._get_elm_func_id(elm=elm_val, attr=True)
+
         if elm_val:
             yield from self._get_elm_func_id(elm=elm_val, attr=attr)
 
@@ -195,7 +198,6 @@ class FunctionCallForceNames(object):
 
         if isinstance(getattr(elm, "value", None), ast.List):
             elements = elm.value.elts
-
         else:
             elements = [elm]
 
@@ -238,6 +240,15 @@ class FunctionCallForceNames(object):
         else:
             yield elm
 
+    def _get_elm_call(self, elm):
+        if not (isinstance(elm, list) or isinstance(elm, str) or isinstance(elm, int)):
+            if isinstance(elm, ast.Call):
+                yield elm
+            else:
+                if hasattr(elm, "value"):
+                    yield from self._get_elm_call(elm=elm.value)
+
+
     def _get_func_call(self):
         for elm in self._get_final_elm(elm=self.tree):
             if (
@@ -249,11 +260,11 @@ class FunctionCallForceNames(object):
                 or isinstance(elm, ast.YieldFrom)
                 or isinstance(elm, ast.Return)
             ):
-                yield elm
+                yield from self._get_elm_call(elm=elm)
 
             if isinstance(elm, ast.If):
                 for if_elm in elm.orelse:
-                    yield if_elm
+                    yield from self._get_elm_call(elm=if_elm)
 
     def run(self):
         for elm in self._get_func_call():
