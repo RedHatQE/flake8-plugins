@@ -51,7 +51,7 @@ class UniqueFixturesNames(object):
                     if not hasattr(deco, "func"):
                         continue
 
-                    if getattr(deco.func, "attr") == "fixture" and deco.func.value.id == "pytest":
+                    if getattr(deco.func, "attr", None) == "fixture" and deco.func.value.id == "pytest":
                         name = func.name
                         if name not in FIXTURES:
                             FIXTURES.append(name)
