@@ -7,7 +7,6 @@ flake8 plugin which verifies that all functions are called with arg=value (and n
 import ast
 import re
 
-
 FCN001 = "FCN001: [{f_name}] function should be called with keywords arguments. {values}"
 
 
@@ -61,8 +60,7 @@ class FunctionCallForceNames(object):
                         continue
 
                     values += (
-                        f"value: {self._get_func_name(elm=val, attr=True)} "
-                        f"(line:{arg.lineno} column:{arg.col_offset})"
+                        f"value: {self._get_func_name(elm=val, attr=True)} (line:{arg.lineno} column:{arg.col_offset})"
                     )
 
             if isinstance(arg, ast.Dict):
@@ -70,7 +68,7 @@ class FunctionCallForceNames(object):
 
             else:
                 values += (
-                    f"value: {self._get_func_name(elm=arg, attr=True)} " f"(line:{arg.lineno} column:{arg.col_offset})"
+                    f"value: {self._get_func_name(elm=arg, attr=True)} (line:{arg.lineno} column:{arg.col_offset})"
                 )
         return values
 
@@ -200,9 +198,12 @@ class FunctionCallForceNames(object):
 
                 values = self._get_values(args_=args_to_process)
                 if values:
+                    _line_n = getattr(elm_key, "lineno", None)
+                    _col_offset = getattr(elm_key, "col_offset", None)
+
                     yield (
-                        getattr(elm_key, "lineno", None) or elm.value.lineno,
-                        getattr(elm_key, "col_offset", None) or elm.value.col_offset,
+                        _line_n if _line_n is not None else elm.value.lineno,
+                        _col_offset if _col_offset is not None else elm.value.col_offset,
                         FCN001.format(f_name=name, values=values),
                         self.name,
                     )
