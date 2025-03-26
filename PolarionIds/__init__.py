@@ -260,6 +260,9 @@ class PolarionIds(object):
                                                 if not hasattr(elt_val, "args") or not hasattr(elt_val, "func"):
                                                     continue
 
+                                                if isinstance(elt_val, ast.Attribute):
+                                                    continue
+
                                             if len(elt_val.args) > 1:
                                                 yield from self._multiple_ids(
                                                     f=f,
