@@ -7,7 +7,6 @@ flake8 extension check that every test has Polarion ID attach to it.
 import ast
 import re
 
-
 PID001 = "PID001: [{f_name} ({params})], Polarion ID is missing"
 PID002 = "PID002: [{f_name} {pid}], Polarion ID is wrong"
 PID003 = "PID003: [{f_name} {pid}], Polarion ID is duplicate"
@@ -255,7 +254,7 @@ class PolarionIds(object):
                                         continue
 
                                     # In case of multiple marks on test param
-                                    if isinstance(pk.value, ast.Tuple):
+                                    if isinstance(pk.value, ast.Tuple) or isinstance(pk.value, ast.List):
                                         for elt_val in pk.value.elts:
                                             if len(elt_val.args) > 1:
                                                 yield from self._multiple_ids(
