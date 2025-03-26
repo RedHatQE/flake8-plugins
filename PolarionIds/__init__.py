@@ -256,6 +256,10 @@ class PolarionIds(object):
                                     # In case of multiple marks on test param
                                     if isinstance(pk.value, ast.Tuple) or isinstance(pk.value, ast.List):
                                         for elt_val in pk.value.elts:
+                                            for elt_val in pk.value.elts:
+                                                if not hasattr(elt_val, "args") or not hasattr(elt_val, "func"):
+                                                    continue
+
                                             if len(elt_val.args) > 1:
                                                 yield from self._multiple_ids(
                                                     f=f,
