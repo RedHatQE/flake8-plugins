@@ -47,7 +47,7 @@ class UnusedCode(object):
                 if deco.func.attr == "fixture" and deco.func.value.id == "pytest":
                     for _key in deco.keywords:
                         if _key.arg == "autouse":
-                            return _key.value.s
+                            return _key.value.value
 
     def _iter_functions(self):
         """
