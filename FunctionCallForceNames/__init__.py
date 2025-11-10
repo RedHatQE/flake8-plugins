@@ -102,7 +102,6 @@ class FunctionCallForceNames(object):
         if elm_func_id:
             yield elm_func_id
 
-        # Handle ast.Constant for string literals (Python 3.8+)
         if isinstance(elm, ast.Constant) and isinstance(elm.value, str):
             yield elm.value
 
