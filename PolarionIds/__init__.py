@@ -127,7 +127,7 @@ class PolarionIds(object):
         yield (
             f.lineno,
             f.col_offset,
-            PID004.format(f_name=f.name, pid=[_arg.s for _arg in polarion_args]),
+            PID004.format(f_name=f.name, pid=[_arg.value for _arg in polarion_args]),
             self.name,
         )
 
@@ -145,12 +145,12 @@ class PolarionIds(object):
     def _non_decorated_fixture(self, f, polarion_id):
         param = ""
         if isinstance(polarion_id, ast.Call):
-            if isinstance(polarion_id.args[0], ast.Str):
-                param = polarion_id.args[0].s
+            if isinstance(polarion_id.args[0], ast.Constant):
+                param = polarion_id.args[0].value
             if isinstance(polarion_id.args[0], ast.List):
                 for parg in polarion_id.args[0].elts:
-                    if isinstance(parg, ast.Str):
-                        param = parg.s
+                    if isinstance(parg, ast.Constant):
+                        param = parg.value
 
         yield (
             polarion_id.lineno,
@@ -160,11 +160,11 @@ class PolarionIds(object):
         )
 
     def _if_bad_pid_fixture(self, f, polarion_id):
-        if not re.match(r"CNV-\d+", polarion_id.s):
+        if not re.match(r"CNV-\d+", polarion_id.value):
             yield (
                 polarion_id.lineno,
                 polarion_id.col_offset,
-                PID002.format(f_name=f.name, pid=polarion_id.s),
+                PID002.format(f_name=f.name, pid=polarion_id.value),
                 self.name,
             )
         else:
@@ -175,7 +175,7 @@ class PolarionIds(object):
         for f_arg in f.args.args:
             for polarion_id in iter_polarion_ids_from_pytest_fixture(self.tree, f_arg.arg):
                 exist = True
-                if isinstance(polarion_id, ast.Str):
+                if isinstance(polarion_id, ast.Constant):
                     yield from self._if_bad_pid_fixture(f=f, polarion_id=polarion_id)
                 else:
                     yield from self._non_decorated_fixture(f=f, polarion_id=polarion_id)
@@ -226,7 +226,7 @@ class PolarionIds(object):
                     if len(deco.args) > 1:
                         yield from self._multiple_ids(f=f, polarion_args=deco.args)
                     if deco.args:
-                        yield from self._if_bad_pid(f=f, polarion_id=deco.args[0].s)
+                        yield from self._if_bad_pid(f=f, polarion_id=deco.args[0].value)
                     else:
                         yield from self._non_decorated(f=f)
                     break
@@ -242,7 +242,7 @@ class PolarionIds(object):
                                     continue
 
                                 if not isinstance(elt, ast.Call):
-                                    yield from self._non_decorated_elt(f=f, elt=elt, params=elt.s)
+                                    yield from self._non_decorated_elt(f=f, elt=elt, params=elt.value)
                                     continue
 
                                 if not elt.keywords:
@@ -272,7 +272,7 @@ class PolarionIds(object):
                                                 polarion_mark_exists = True
                                                 yield from self._if_bad_pid(
                                                     f=f,
-                                                    polarion_id=elt_val.args[0].s,
+                                                    polarion_id=elt_val.args[0].value,
                                                 )
 
                                     # In case one mark on test param
@@ -280,11 +280,11 @@ class PolarionIds(object):
                                         if len(pk.value.args) > 1:
                                             yield from self._multiple_ids(f=f, polarion_args=pk.value.args)
                                         polarion_mark_exists = True
-                                        yield from self._if_bad_pid(f=f, polarion_id=pk.value.args[0].s)
+                                        yield from self._if_bad_pid(f=f, polarion_id=pk.value.args[0].value)
 
                                     else:
                                         # In case no mark on test param
-                                        yield from self._non_decorated(f=f, params=elt.args[0].s)
+                                        yield from self._non_decorated(f=f, params=elt.args[0].value)
                 else:
                     yield from self._non_decorated(f=f)
 

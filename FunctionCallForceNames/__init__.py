@@ -102,9 +102,8 @@ class FunctionCallForceNames(object):
         if elm_func_id:
             yield elm_func_id
 
-        elm_func_s = getattr(elm, "s", None)
-        if elm_func_s:
-            yield elm_func_s
+        if isinstance(elm, ast.Constant) and isinstance(elm.value, str):
+            yield elm.value
 
         elm_val_func = getattr(elm, "func", None)
         if elm_val_func:

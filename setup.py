@@ -9,7 +9,7 @@ setup(
     version="1.0",
     packages=find_packages(),
     include_package_data=True,
-    python_requires=">=3.6",
+    python_requires=">=3.10",
     install_requires=["flake8"],
     entry_points={
         "flake8.extension": [

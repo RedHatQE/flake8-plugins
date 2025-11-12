@@ -243,7 +243,7 @@ def tmp_test_file(tmpdir):
 
 def check_polarion_ids_plugin(test_file_name):
     out, _ = Popen(
-        ["flake8", "--enable-extensions=PID", test_file_name],
+        ["flake8", "--enable-extensions=PID", "--select=PID", test_file_name],
         stdout=PIPE,
         stderr=PIPE,
     ).communicate()
