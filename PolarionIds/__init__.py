@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 flake8 extension check that every test has Polarion ID attach to it.
 """
@@ -80,7 +78,7 @@ def iter_polarion_ids_from_pytest_fixture(tree, name):
                                 yield deco_elts
 
 
-class PolarionIds(object):
+class PolarionIds:
     """
     flake8 extension check that every test has Polarion ID attach to it.
     """

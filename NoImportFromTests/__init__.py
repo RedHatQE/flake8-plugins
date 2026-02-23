@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 flake8 extension to check import from conftest.py..
 """
@@ -7,11 +5,10 @@ flake8 extension to check import from conftest.py..
 import ast
 import re
 
-
 NIT001 = "NIT001: Import from tests is not allowed."
 
 
-class NoImportFromTests(object):
+class NoImportFromTests:
     """
     flake8 extension to check import from tests.
     """

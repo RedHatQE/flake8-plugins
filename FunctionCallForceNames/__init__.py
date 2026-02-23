@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 flake8 plugin which verifies that all functions are called with arg=value (and not only with value).
 """
@@ -10,7 +8,7 @@ import re
 FCN001 = "FCN001: [{f_name}] function should be called with keywords arguments. {values}"
 
 
-class FunctionCallForceNames(object):
+class FunctionCallForceNames:
     """
     flake8 plugin which verifies that all functions are called with arg=value (and not only with value).
     """

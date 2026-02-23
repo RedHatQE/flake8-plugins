@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 flake8 extension to check import from conftest.py..
 """
@@ -7,7 +5,7 @@ flake8 extension to check import from conftest.py..
 NIC001 = "NIC001: Import from conftest.py is not allowed."
 
 
-class NoImportFromConftest(object):
+class NoImportFromConftest:
     """
     flake8 extension to check import from conftest.py..
     """
