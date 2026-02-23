@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 flake8 extension check that every test has Polarion ID attach to it.
 """
@@ -44,9 +42,8 @@ def iter_test_functions(tree):
 
 def find_func_in_tree(tree, name):
     for elm in tree.body:
-        if isinstance(elm, ast.FunctionDef):
-            if elm.name == name:
-                return elm
+        if isinstance(elm, ast.FunctionDef) and elm.name == name:
+            return elm
 
 
 def iter_polarion_ids_from_pytest_fixture(tree, name):
@@ -80,7 +77,7 @@ def iter_polarion_ids_from_pytest_fixture(tree, name):
                                 yield deco_elts
 
 
-class PolarionIds(object):
+class PolarionIds:
     """
     flake8 extension check that every test has Polarion ID attach to it.
     """
@@ -254,7 +251,7 @@ class PolarionIds(object):
                                         continue
 
                                     # In case of multiple marks on test param
-                                    if isinstance(pk.value, ast.Tuple) or isinstance(pk.value, ast.List):
+                                    if isinstance(pk.value, (ast.Tuple, ast.List)):
                                         for elt_val in pk.value.elts:
                                             if not hasattr(elt_val, "args") or not hasattr(elt_val, "func"):
                                                 continue

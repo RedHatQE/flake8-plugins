@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 flake8 extension to check import from conftest.py..
 """
@@ -7,11 +5,10 @@ flake8 extension to check import from conftest.py..
 import ast
 import re
 
-
 NIT001 = "NIT001: Import from tests is not allowed."
 
 
-class NoImportFromTests(object):
+class NoImportFromTests:
     """
     flake8 extension to check import from tests.
     """
@@ -41,7 +38,7 @@ class NoImportFromTests(object):
 
     @staticmethod
     def _is_import(_import):
-        if isinstance(_import, ast.Import) or isinstance(_import, ast.ImportFrom):
+        if isinstance(_import, (ast.Import, ast.ImportFrom)):
             return _import
 
     def _all_imports(self):
@@ -50,7 +47,7 @@ class NoImportFromTests(object):
                 yield _import
 
     def _import_in_exclude(self, imports):
-        return any([_imp for _imp in imports if _imp in self.exclude_imports])
+        return any(_imp for _imp in imports if _imp in self.exclude_imports)
 
     def run(self):
         """

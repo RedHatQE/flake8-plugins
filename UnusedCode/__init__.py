@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 flake8 extension to check unique fixtures names.
 """
@@ -7,11 +5,10 @@ flake8 extension to check unique fixtures names.
 import ast
 import subprocess
 
-
 UUC001 = "UUC001: [{f_name}], Is not used anywhere in the code."
 
 
-class UnusedCode(object):
+class UnusedCode:
     """
     flake8 extension to check if code is not used.
     """

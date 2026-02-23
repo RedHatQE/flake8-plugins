@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 flake8 plugin which verifies that all functions are called with arg=value (and not only with value).
 """
@@ -10,7 +8,7 @@ import re
 FCN001 = "FCN001: [{f_name}] function should be called with keywords arguments. {values}"
 
 
-class FunctionCallForceNames(object):
+class FunctionCallForceNames:
     """
     flake8 plugin which verifies that all functions are called with arg=value (and not only with value).
     """
@@ -42,14 +40,13 @@ class FunctionCallForceNames(object):
         functions = set()
         for builtin in [*__builtins__]:
             try:
-                funcs = set(func for func in eval(builtin).__dict__ if not func.startswith("_"))
+                funcs = {func for func in eval(builtin).__dict__ if not func.startswith("_")}
                 if funcs:
                     functions.update(funcs)
             except AttributeError:
                 continue
 
-        functions = list(functions)
-        return functions
+        return list(functions)
 
     def _get_values(self, args_):
         values = ""
@@ -95,7 +92,7 @@ class FunctionCallForceNames(object):
                 yield name[0].strip("(").strip("with ")
 
             for elm_body in elm.body:
-                if isinstance(elm_body, ast.Call) or isinstance(elm_body, ast.Expr) or isinstance(elm_body, ast.Assign):
+                if isinstance(elm_body, (ast.Call, ast.Expr, ast.Assign)):
                     yield from self._get_elm_func_id(elm=elm_body, attr=attr)
 
         elm_func_id = getattr(elm, "id", None)
@@ -147,7 +144,7 @@ class FunctionCallForceNames(object):
 
         def _filter_args(elm):
             _args = _find_args(elm=elm)
-            _args = [ar for ar in _args if not (isinstance(ar, ast.Starred) or isinstance(ar, ast.JoinedStr))]
+            _args = [ar for ar in _args if not isinstance(ar, (ast.Starred, ast.JoinedStr))]
             if _args:
                 res[elm] = _args
 
@@ -176,12 +173,12 @@ class FunctionCallForceNames(object):
         else:
             elements = [elm]
 
-        for elm in elements:
-            elm_and_args = self._get_args(elm=elm)
+        for element in elements:
+            elm_and_args = self._get_args(elm=element)
             if not elm_and_args:
                 return
 
-            name = self._get_func_name(elm=elm)
+            name = self._get_func_name(elm=element)
             for elm_key, args_key in elm_and_args.items():
                 if self._skip_function_from_check(elm=elm_key):
                     continue
@@ -189,9 +186,8 @@ class FunctionCallForceNames(object):
                 args_to_process = []
                 for _arg_key in args_key:
                     # Skip only functions.
-                    if isinstance(_arg_key, ast.FunctionDef):
-                        if self._skip_function_from_check(elm=_arg_key):
-                            continue
+                    if isinstance(_arg_key, ast.FunctionDef) and self._skip_function_from_check(elm=_arg_key):
+                        continue
 
                     args_to_process.append(_arg_key)
 
@@ -201,8 +197,8 @@ class FunctionCallForceNames(object):
                     _col_offset = getattr(elm_key, "col_offset", None)
 
                     yield (
-                        _line_n if _line_n is not None else elm.value.lineno,
-                        _col_offset if _col_offset is not None else elm.value.col_offset,
+                        _line_n if _line_n is not None else element.value.lineno,
+                        _col_offset if _col_offset is not None else element.value.col_offset,
                         FCN001.format(f_name=name, values=values),
                         self.name,
                     )
@@ -218,7 +214,7 @@ class FunctionCallForceNames(object):
             yield elm
 
     def _get_elm_call(self, elm):
-        if not (isinstance(elm, list) or isinstance(elm, str) or isinstance(elm, int)):
+        if not isinstance(elm, (list, str, int)):
             if isinstance(elm, ast.Call):
                 yield elm
             else:
@@ -227,15 +223,7 @@ class FunctionCallForceNames(object):
 
     def _get_func_call(self):
         for elm in self._get_final_elm(elm=self.tree):
-            if (
-                isinstance(elm, ast.Expr)
-                or isinstance(elm, ast.Call)
-                or isinstance(elm, ast.Assign)
-                or isinstance(elm, ast.With)
-                or isinstance(elm, ast.Yield)
-                or isinstance(elm, ast.YieldFrom)
-                or isinstance(elm, ast.Return)
-            ):
+            if isinstance(elm, (ast.Expr, ast.Call, ast.Assign, ast.With, ast.Yield, ast.YieldFrom, ast.Return)):
                 yield from self._get_elm_call(elm=elm)
 
             if isinstance(elm, ast.If):

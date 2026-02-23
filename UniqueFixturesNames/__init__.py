@@ -1,17 +1,14 @@
-# -*- coding: utf-8 -*-
-
 """
 flake8 extension to check unique fixtures names.
 """
 
 import ast
 
-
 UFN001 = "UFN001: [{f_name}], Fixture name is not unique."
 FIXTURES = []
 
 
-class UniqueFixturesNames(object):
+class UniqueFixturesNames:
     """
     flake8 extension to check unique fixtures names.
     """
