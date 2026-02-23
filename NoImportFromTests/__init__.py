@@ -38,7 +38,7 @@ class NoImportFromTests:
 
     @staticmethod
     def _is_import(_import):
-        if isinstance(_import, ast.Import) or isinstance(_import, ast.ImportFrom):
+        if isinstance(_import, (ast.Import, ast.ImportFrom)):
             return _import
 
     def _all_imports(self):
@@ -47,7 +47,7 @@ class NoImportFromTests:
                 yield _import
 
     def _import_in_exclude(self, imports):
-        return any([_imp for _imp in imports if _imp in self.exclude_imports])
+        return any(_imp for _imp in imports if _imp in self.exclude_imports)
 
     def run(self):
         """
