@@ -50,7 +50,7 @@ def iter_polarion_ids_from_pytest_fixture(tree, name):
     func = find_func_in_tree(tree=tree, name=name)
     if func:
         if not func.decorator_list:
-            return None
+            yield None
 
         for deco in func.decorator_list:
             if not hasattr(deco, "func"):
